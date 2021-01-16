@@ -99,7 +99,7 @@ def need_check_ip():
         return True
     try:
         body = request.urlopen(url=cfg["check_url"], timeout=10).read()
-        return 'Synology' not in body
+        return "synology" not in str(body).lower()
     except Exception as e:
         logging.warning("check url FAILED, error: %s", str(e))
         return True
