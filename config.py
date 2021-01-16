@@ -14,19 +14,21 @@ if os.name == 'nt':
 cfg = {}
 
 # dnspod 登录配置
-cfg["login_token"] = ''             # 默认空参数，要求用户必填 格式 'token_id,token'  # 登录token
+cfg["login_token"] = ''  # 默认空参数，要求用户必填 格式 'token_id,token'  # 登录token
 
 # ddns 基本配置
-cfg["sub_domain"] = ''              # 默认空参数，要求用户必填 #格式 'www'  # 子域名
-cfg["domain"] = ''                  # 默认空参数，要求用户必填 #格式 'domain.com'  # 域名
-cfg["interval"] = '5'               # 最小更新间隔
-cfg["record_id"] = '{auto}'         # 记录id，程序自动生成
-cfg["current_ip"] = '{auto}'        # 当前ip，程序自动生成
-cfg["email"] = ''                   # 默认空参数，要求用户必填 #格式 'you@email.com'
+cfg["sub_domain"] = ''  # 默认空参数，要求用户必填 #格式 'www'  # 子域名
+cfg["domain"] = ''  # 默认空参数，要求用户必填 #格式 'domain.com'  # 域名
+cfg["check_interval"] = '1'  # 检查周期
+cfg["check_url"] = ''  # 用于检测目标服务器是否可连接的端口
+cfg["interval"] = '5'  # 最小更新间隔
+cfg["record_id"] = '{auto}'  # 记录id，程序自动生成
+cfg["current_ip"] = '{auto}'  # 当前ip，程序自动生成
+cfg["email"] = ''  # 默认空参数，要求用户必填 #格式 'you@email.com'
 
 # ip 池
-cfg["ip_count"] = '1'               # 此域名拥有的ip数量，默认为 1 ， OpenWrt 玩家可能会有多个IP
-cfg["ip_pool"] = '{auto}'           # ip 池 ..，程序自动生成
+cfg["ip_count"] = '1'  # 此域名拥有的ip数量，默认为 1 ， OpenWrt 玩家可能会有多个IP
+cfg["ip_pool"] = '{auto}'  # ip 池 ..，程序自动生成
 cfg["last_update_time"] = '{auto}'  # 上次更新成功时间戳，程序自动生成
 
 
@@ -63,6 +65,7 @@ def read_config_from_env():
         if os.getenv(key) is not None:
             cfg[key] = os.getenv(key)
 
+
 # 从命令行读取参数
 
 
@@ -90,12 +93,14 @@ def save_config():
     except NotImplementedError as err:
         logging.error("FAILED to save config:" + str(err))
 
+
 # 不太清楚这个函数能干啥用 = = 写着玩。。。
 
 
 def save_config_to_env():
     for key in cfg:
         os.environ[key] = cfg[key]
+
 
 # 保存配置到文件… 这个函数现在会把配置文件里的注释也删掉……
 
@@ -105,11 +110,12 @@ def save_config_to_file():
     try:
         with open(config_path, "w+") as f:
             f.writelines([
-                ('%-'+str(max_key_len)+'s=%s\n') % (key, cfg[key])
+                ('%-' + str(max_key_len) + 's=%s\n') % (key, cfg[key])
                 for key in cfg.keys()
             ])
     except IOError as err:
         logging.error("FAILED to save config to file: " + str(err))
+
 
 # 检查配置是否齐全
 def check_config():
@@ -120,11 +126,11 @@ def check_config():
         logging.fatal('config error: need login info')
         exit()
     try:
-        if not(int(cfg["interval"])):
+        if not (int(cfg["interval"])):
             logging.fatal('interval error')
             exit()
-        if not(int(cfg["ip_count"])):
-            logging.fatal('ip_count error')            
+        if not (int(cfg["ip_count"])):
+            logging.fatal('ip_count error')
             exit()
     except:
         logging.fatal('config error')
