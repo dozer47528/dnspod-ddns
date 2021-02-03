@@ -2,23 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-import os
-import json
-import signal
 import functools
+import json
 import logging
+import signal
 import socket
 import time
 from urllib import request, error, parse
-from config import read_config, save_config, check_config, cfg
+
+from config import read_config, check_config, cfg
 from get_ip import get_ip
-
-
-def header():
-    h = {
-        'User-Agent': 'Client/0.0.1 ({})'.format(cfg['email'])
-    }
-    return h
 
 
 def get_record_id(domain, sub_domain):
@@ -28,7 +21,7 @@ def get_record_id(domain, sub_domain):
         'format': 'json',
         'domain': domain
     })
-    req = request.Request(url=url, data=params.encode('utf-8'), method='POST', headers=header())
+    req = request.Request(url=url, data=params.encode('utf-8'), method='POST')
     try:
         resp = request.urlopen(req).read().decode()
     except (error.HTTPError, error.URLError, socket.timeout):
@@ -50,7 +43,7 @@ def update_record():
         'record_id': cfg['record_id'],
         'record_line': '默认'
     })
-    req = request.Request(url=url, data=params.encode('utf-8'), method='POST', headers=header())
+    req = request.Request(url=url, data=params.encode('utf-8'), method='POST')
     resp = request.urlopen(req).read().decode()
     records = json.loads(resp)
     cfg['last_update_time'] = str(time.gmtime())
@@ -83,7 +76,6 @@ def main():
                 ip_pool.insert(0, current_ip)
                 cfg['ip_pool'] = ','.join([str(x) for x in ip_pool[:ip_count]])
                 update_record()
-                save_config()
         else:
             logging.error('get current ip FAILED.')
 

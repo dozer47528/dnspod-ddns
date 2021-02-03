@@ -86,37 +86,6 @@ def read_config_from_argv():
         sys.exit(1)
 
 
-def save_config():
-    try:
-        save_config_to_env()
-        save_config_to_file()
-    except NotImplementedError as err:
-        logging.error("FAILED to save config:" + str(err))
-
-
-# 不太清楚这个函数能干啥用 = = 写着玩。。。
-
-
-def save_config_to_env():
-    for key in cfg:
-        os.environ[key] = cfg[key]
-
-
-# 保存配置到文件… 这个函数现在会把配置文件里的注释也删掉……
-
-
-def save_config_to_file():
-    max_key_len = max([len(key) for key in cfg.keys()])
-    try:
-        with open(config_path, "w+") as f:
-            f.writelines([
-                ('%-' + str(max_key_len) + 's=%s\n') % (key, cfg[key])
-                for key in cfg.keys()
-            ])
-    except IOError as err:
-        logging.error("FAILED to save config to file: " + str(err))
-
-
 # 检查配置是否齐全
 def check_config():
     if not (
